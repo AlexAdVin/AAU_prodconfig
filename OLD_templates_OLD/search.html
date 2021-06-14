@@ -1,0 +1,83 @@
+{% extends "layout2.html" %}
+
+<title>
+    Search
+</title>
+
+{% block body %}
+
+
+
+
+<div class="container" style="margin-top:30px">
+
+    <div class="row">
+        <div class="col-sm-4">
+
+            <h1>Search</h1>
+            <p>Search for a book here:</p>
+
+            <form method="POST">
+                {% if message %}
+                    <p class="message">{{ message | safe }}</p>
+                {% endif %}
+                <div class="form-group">
+        
+                    <input
+                    type="text"
+                    autofocus="autofocus"  
+                    class="form-control" 
+                    name="search_string" 
+                    placeholder="Search here..">
+                    <br>
+                    <div class="form-group">
+                        <button class="btn btn-primary">Search book</button>
+                    </div>
+        
+                    <!-- 
+                    <input
+                    class="btn btn-primary"
+                    type="submit"
+                    formaction="/search"
+                    value="Search book">
+                    -->
+        
+                </div>
+        
+            </form>
+        
+
+        
+        </div>
+        
+
+
+        <div class="col-sm-8">
+            
+            {% for result in results %}
+            <ul>
+                <li>
+                    Title: <a href="{{ url_for('details', result_id=result.id) }}">  
+                        {{ result.title }} 
+                    </a> <hr>
+                    ISBN: <a> {{ result.isbn }} </a><br> 
+                    Author: <a> {{ result.author }} </a> <br>
+                    Year: <a>  {{ result.year }} </a> <br>
+                </li>
+            </ul>
+            {% else %}
+            <h2>No such book. Try again. :-)</h2>
+            {% endfor %}
+
+        </div>
+    </div>
+
+
+
+</div>
+
+
+{% endblock %}
+
+
+            

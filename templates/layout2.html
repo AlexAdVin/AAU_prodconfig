@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script type=text/javascript>
+        $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
+
+
+
+<style>
+                
+    .sidenav {
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding: 48px 0 0; /* Height of navbar */
+    box-shadow: inset 1px 0 0 rgba(0, 0, 0, .1);
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    }
+    
+
+    .nav-item a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #818181;
+    display: block;
+    }
+
+    .nav-item a:activ {
+
+    color: #861212;
+
+    }
+
+    .nav-item a:hover {
+    color: #f1f1f1;
+    }
+
+    .main {
+    margin-left: 160px; /* Same as the width of the sidenav */
+    font-size: 28px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+    }
+
+    @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+    }
+
+    /* Style the buttons that are used to open and close the accordion panel */
+    /* https://www.w3schools.com/howto/howto_js_accordion.asp */
+    .accordion {
+        background-color: #eee;
+        color: #444;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        text-align: left;
+        border: none;
+        outline: none;
+        transition: 0.4s;
+    }
+
+    /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+    .active, .accordion:hover {
+    background-color: #ccc;
+    }
+
+    /* Style the accordion panel. Note: hidden by default */
+    .panel {
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
+    } 
+
+
+/* The switch - the box around the slider */
+.switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+
+/* The slider */
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .2s;
+transition: .2s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .2s;
+transition: .2s;
+}
+
+input:checked + .slider {
+background-color: #13b11b;
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+border-radius: 34px;
+}
+
+.slider.round:before {
+border-radius: 50%;
+}
+
+    #total {
+        background-color: #f2f2f2;
+    }
+
+    @media print
+    {    
+        .no-print, .no-print *
+        {
+            display: none !important;
+        }
+    }
+</style>
+
+
+</head>
+
+
+<body>
+<!--    
+    <div class="jumbotron text-center" style="margin-bottom:0">
+        <h1>CO2e Footprint</h1>
+        <p>Resize this responsive page to see the effect!</p> 
+    </div>
+-->
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <a class="navbar-brand" href="/">AAU Smart Production Lab</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav px-3">
+                {% if session.log %}
+                
+                <li class="nav-item" >
+                    <a class="nav-link" href="/logout">Logout</a>
+                </li>  
+                {% else %}
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">Register</a>
+                </li>    
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Login</a>
+                </li>
+                <hr>
+                {% endif %}
+
+            </ul>
+        </div>  
+    </nav>
+
+    <!-- Start Side Nav -->
+<div class="container-fluid">
+    <div class="row">
+
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="/">
+                    <span data-feather="home"></span>
+                    Home
+                    </a>
+                </li>
+                {% if session.log %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/create">
+                    <span data-feather="file"></span>
+                    Create product
+                    </a>
+                </li>
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="/configurator">
+                    <span data-feather="check-circle"></span>
+                    Customize model
+                    </a>
+                </li>
+                <li class="nav-item activ">
+                    <a class="nav-link" href="/inquiry">
+                    <span data-feather="shopping-cart"></span>
+                    Order inquiries
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/workplan">
+                    <span data-feather="cpu"></span>
+                    Workplan
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/resources">
+                    <span data-feather="cpu"></span>
+                    Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/orders">
+                    <span data-feather="bar-chart-2"></span>
+                    Orders
+                    </a>
+                </li>         
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">
+                    <span data-feather="activity"></span>
+                    Dashboard
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">
+                    <span data-feather="key"></span>
+                    Register
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">
+                    <span data-feather="log-in"></span>
+                    Login
+                    </a>
+                </li>
+
+                {% endif %}
+
+                </ul>
+
+            </div>
+        </nav>
+
+    <!-- Start Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        {% include "includes/_message.html" %}
+        
+        {% block body %}
+
+        {% endblock %}
+        
+    </main>
+
+    </div>
+</div>
+  <!-- End Side Nav -->
+
+
+
+<!--
+<div class="jumbotron text-center" style="margin-bottom:0">
+  <p>Footer</p>
+</div>
+-->
+
+</body>
+
+
+
+{% block script %}
+<!--
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+-->
+{% endblock %}
+
+
+
+</html>

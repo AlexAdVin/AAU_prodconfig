@@ -1,0 +1,76 @@
+{% extends "layout2.html" %}
+
+
+
+{% block body %}
+
+
+
+<h2>Data management plan</h2>
+<p>A data management plan documents the GHG inventory process and the internal
+  quality assurance and quality control (QA/QC) procedures in place to enable the
+  preparation of the inventory from its inception through to final reporting. The
+  data management plan is a valuable tool to manage data and track progress of the inventory
+  over time</p>
+
+
+<button class="accordion">Product description</button>
+<div class="panel">
+    <form id="electricity" action="" oninput="x.value=parseInt(a.value)*choice1.value">  
+
+      <input type="submit">
+    </form>
+</div>
+
+<button class="accordion">Responsibilities</button>
+<div class="panel">
+  <form id="responsibility">  
+    <p>
+      Information on the entity(ies) or person(s) responsible for measurement and data collection procedures
+    </p>
+    <hr>
+    <label for="responsibility">Name and contact details of persons
+      responsible for</label>
+      <ul>
+        <li>Management of GHG inventory</li>
+        <li>Data collection for each process</li>
+        <li>Internal audit procedures</li>
+        <li>External audit procedures</li>
+      </ul>
+
+    <input type="text" id="responsible1" name="responsible_name" placeholder="Full Name">
+    <input type="text" id="responsible2" name="responsible_contact" placeholder="E-mail address">
+  <input type="submit">
+</form>
+</div>
+
+<button class="accordion">Boundary and inventory description</button>
+<div class="pane4">
+  <form id="Boundary">  
+    <p>
+      All information that describes the product’s inventory boundary
+    </p>
+    <label for="boundary">Description of the boundary decision
+      based on the GHG Protocol Corporate
+      Standard:</label>
+      <textarea name="boundary" cols="30" rows="5" placeholder="Insert relevant data"></textarea>
+  <input type="submit">
+</form>
+</div> 
+
+
+<hr>
+
+
+<script>
+    
+    $( document ).ready(function()
+    {
+        $.getJSON('/getValue', function(data){
+          console.log(data['rate']);
+        });
+    });
+
+</script>
+
+{% endblock %}

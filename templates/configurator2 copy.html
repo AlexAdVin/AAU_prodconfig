@@ -1,0 +1,246 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Configure your product
+{% endblock %}
+
+
+
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+<div class="row">
+
+	<div class="col-xl-6 col-md-12 mb-4">
+        <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+			<div class="card" name="products">
+
+				<div class="card-header">
+					<h5 class="mb-0 text-center"><strong>Configure the product</strong></h5>
+				</div>
+
+
+				<div class="card-body">
+					<p class="card-text">Select which components the product should be manufactured with.</p><hr>
+
+                    <input type="checkbox" id="1" name="component" value="Bottom housing" checked="checked" disabled> Bottom housing<br>
+                    <input type="checkbox" id="2" name="component" value="PCB">PCB<br>
+                    <input type="checkbox" id="3" name="component" value="Fuse1" disabled>Fuse 1<br>
+                    <input type="checkbox" id="4" name="component" value="Fuse2" disabled>Fuse 2<br>
+                    <input type="checkbox" id="5" name="component" value="Top housing">Top Housing<br>
+                    <div id="test2" value="{{prod_id}}" hidden>
+                        {{prod_id}}
+                    </div><hr>
+
+
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" onclick="work()">Create configuration</button>
+                    </div>
+				</div>
+
+			</div>
+
+        </div>
+    </div>
+
+	<div class="col-xl-6 col-md-12 mb-4">
+		<div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+			<div class="card">
+
+				<div class="card-header">
+					<h5 class="mb-0 text-center"><strong>Properties for the selected components</strong></h5>
+				</div>
+
+				<div class="card-body">
+                    <p class="card-text">Select a property for each component</p>
+                    <p class="card-text">The "Bottom housing" component is the interface of the product and therefore cannnot be excluded.</p>
+                    <a href="#" class="card-link">Card link</a>
+                    <a href="#" class="card-link">Another link</a><hr>
+
+                    <form action="{{ url_for('createOrder', prod_id='{}'.format(prod_id)) }}" method="post">
+                        <ul id="show">
+                            
+                            
+                                    <p>Please select a component from the list above.</p>
+                            
+                        </ul>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block" id="configure" >Create configuration</button>
+                        </div>
+                    </form>
+                </div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+
+<script>
+    var checked = [];
+
+	$('input[type=checkbox]').on('change', function() {			//https://stackoverflow.com/questions/48220938/howto-update-multiple-checkbox-values-at-once-on-a-array-variable-using-jquery
+        // Fuses are only available if PCB is on
+        if(! document.getElementById('2').checked) {
+        //I am checked
+            document.getElementById("3").disabled = true;
+            document.getElementById("4").disabled = true;
+            document.getElementById('3').checked = false;
+            document.getElementById('4').checked = false;
+        }else{
+            document.getElementById("3").disabled = false;
+            document.getElementById("4").disabled = false;
+        }
+
+        // Empty the array for each checked, before appending newly checked elements
+        if(checked){
+            checked.length = 0;
+        };
+        
+        $("input[type='checkbox']:checked").each(myEach);
+        function myEach(index, jsonObj) {
+
+            checked.push({
+            id: this.id,
+            name: this.value
+            });
+
+        };
+        console.log(checked);
+    
+        var jsonObj = JSON.stringify(checked);
+        localStorage.setItem("testJSON", jsonObj);
+
+        var prod_id = parseInt(document.getElementById("test2").innerHTML);
+        testMe = localStorage.getItem("testJSON");
+		console.log("JSON parse objects:",JSON.parse(testMe));
+        
+        
+        $.get($SCRIPT_ROOT + '/model/'+`${prod_id}`, 		// $.post(URL,data,callback);
+        {
+            a: testMe,
+            b: prod_id
+        }, 
+
+        function(data, status) {
+			
+            console.log("From server:", data.result, "\nStatus: " + status)//, "\nproperty: ", data.prop );
+            
+            var compList = data.result;
+            console.log("compList: ",compList, "lenght:", compList.length);
+            
+            var s1 = document.getElementById("show");
+				s1.innerHTML = "";
+
+            for (let index = 0; index < compList.length; index++) {
+                
+                var c_name = compList[index].component[0];
+
+                console.log("element from server:", c_name, "itteration:", index)
+
+                var acc_btn = document.createElement("input");
+                
+                // Helper function to set multiple attributes to an element
+                function setAttributes(el, attrs) {
+                    for(var key in attrs) {
+                        el.setAttribute(key, attrs[key]);
+                    }
+                }
+                
+                setAttributes(acc_btn, {
+                    "class":"accordion",
+                    "id": "component" + c_name,
+                    "value": c_name
+                    
+                });
+                
+                
+                var div_el = document.createElement("div");
+                div_el.setAttribute("class", "panel");
+
+                s1.appendChild(acc_btn);
+                s1.appendChild(div_el);
+
+                for (let i = 0; i < compList[index].property[0].length; i++) {
+
+                    console.log("check lenght:", compList[index].property[0].length)
+
+                    var p_name = compList[index].property[0][i];
+                    var e_id = compList[index].id[0][i];
+                    var e_value = compList[index].emissionValue[0][i];
+                    var e_unit = compList[index].emissionValue[0][i];
+
+
+                    console.log("propertyList:",p_name, "\nEmission value:", e_value)
+                    
+                    var checkBox = createCheckbox();
+                    var labelBox = createlabel();
+                    var br = document.createElement("br");
+                    console.log(checkBox)
+                    div_el.appendChild(checkBox);
+                    div_el.appendChild(labelBox);
+                    div_el.appendChild(br);
+
+                    // Helper function to create an input element
+                    function createCheckbox() {
+                        let checkbox = document.createElement("input");
+                        checkbox.setAttribute("type", "checkbox");
+                        checkbox.setAttribute("name", "checkbox" + e_id);
+                        checkbox.setAttribute("value", e_id);
+                        return checkbox;
+                    }
+
+                    // Helper function to create an input element
+                    function createlabel() {
+                        var newLabel1 = document.createElement("label");
+				        newLabel1.setAttribute("for", "checkbox" + i)
+                        newLabel1.innerHTML = 'The property : ' + p_name + "______kgCO2e: " + e_value;
+                        return newLabel1;
+                    }
+                    
+
+                
+                };
+
+                
+
+                
+
+                // Mechanics for accordion
+                acc_btn.addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                } 
+                
+                });
+                
+
+            }
+                
+        });
+        
+	});
+    
+    
+</script>
+
+
+
+{% endblock %}

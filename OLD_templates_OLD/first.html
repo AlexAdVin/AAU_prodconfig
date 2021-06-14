@@ -1,0 +1,122 @@
+{% extends "layout2.html" %}
+
+
+
+{% block body %}
+
+<h2>TRANSPORTATION</h2>
+<h5>Calculate CO2 from transportation</h5>
+<div class="fakeimg">Fake Image</div>
+<p>Description</p>
+<p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+<br>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('#form_Transportation').onsubmit = function() {
+        var Km = document.querySelector('#Km_input').value;
+        alert(`Hello ${Km}!`);
+
+        
+    };                
+    
+document.querySelector('button').onclick = posty;
+
+var choice_back = document.querySelector('#Fuel_type').onchange
+document.querySelector('#Fuel_type').onchange = function() {
+    document.querySelector('#Selection').innerHTML = this.value;
+
+    $.ajax({
+        url: "/",
+        type:"POST",
+        
+
+    });
+};
+
+});
+
+function posty() {
+    var choice = document.querySelector('#choice1').value;
+    alert(`This is working: ${choice}`);
+}
+</script>
+
+<!----------- END SCRIPT ------------>
+
+<!----------- START Client ------------>
+<div class="container">
+    <form id = "form_Transportation" action="" method="POST">
+
+            <label for="Car_type">Select the vehicle type</label><br>
+            <select name="car_type" id="choice1">
+                {% for vehicle in vehicle %}
+
+                <option>{{ vehicle }}</option>
+
+                {% endfor %}
+            </select>
+
+            <br>
+            <hr>
+
+            <label for="fuel_type">Select the fuel type for the car</label><br>
+            <select name="fuel_type" id="Fuel_type">
+                {% for fuel in fuel %}
+
+                <option>{{ fuel }}</option>
+
+                {% endfor %}
+            </select>
+
+            <div class="form-group">
+                <button onclick="posty()" class="btn btn-primary">POST</button>
+            </div>
+
+            <h5 id= "Selection">Title description, Sep 2, 2017</h5>
+    
+    
+            <br>
+            <label for="technology">Select the technology type for the car</label>
+            <select name="technology" id="Technology">
+                {% for technology in technology %}
+
+                <option>{{ technology }}</option>
+
+                {% endfor %}
+            </select>
+
+            <br>
+            <label for="km_input">Enter the distance travelled for the activity</label>
+            <input id = "Km_input" name="km_input" type=number placeholder="Enter km..">
+
+            <input type="submit">
+
+        </form>
+
+        <form oninput="result.value=parseInt(a.value)+parseInt(b.value)">
+            <input type="range" id="b" name="b" value="50" /> +
+            <input type="number" id="a" name="a" value="10" /> =
+            <output name="result" for="a b">60</output>
+        </form>
+
+
+        <div class="form-group">
+            <button class="btn btn-primary">Calculate CO2 equivalent</button>
+        </div>
+
+    
+
+</div>
+
+<hr>
+<h2>TITLE HEADING</h2>
+<h5>Title description, Sep 2, 2017</h5>
+<div class="fakeimg">Fake Image</div>
+<p>Some text..</p>
+<p>Sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Consumption Graph
+{% endblock %}
+
+
+
+
+{% block body %}
+
+<div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  
+  <h1 class="h2">Consumption Graph</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+      <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+      <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+      <span data-feather="calendar"></span>
+      This week
+    </button>
+  </div>
+</div>
+
+
+
+<div id="ampsContainer" class="container">
+
+  <div id="Irms" class="I">
+    <div id="chart_div" style="width: 100%; height: 500px;"></div>
+  </div><!--AmpsChart-->
+
+</div><!--ampsContainer-->
+
+</div>
+{% endblock %}
+
+
+
+{% block script %}
+
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+<script src="{{ url_for('static', filename='graph.js') }}"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+
+<!-- Energidataservice -->
+<script src="{{ url_for('static', filename='co2api.js') }}"></script>
+
+{% endblock %}

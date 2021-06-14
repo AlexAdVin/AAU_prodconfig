@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Product Detail</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script src="/static/main.js"></script>
+	<link rel="stylesheet" href="/static/main.css" />
+</head>
+<body>
+	<main>
+		<section class="product-detail">
+			
+			<div class="imagery">
+				<img src="/static/images/xr-blue.png" alt="iPhone XR" class="image" />
+			</div>
+
+			<div class="detail">
+				<h1>iPhone XR</h1>
+				<h3>From £100 per month or £5000</h3>
+				<div class="options">
+					<div class="products btn_grid">
+
+						<label>Choose product configuration:</label>
+						<select class="choice" id="choice1">
+							{% for item in products %}
+							
+							<option value="{{ item.id }}"> {{ item.name }} </option>
+						
+							{% endfor %}
+						</select>
+						<br>
+
+						<h3 id="selection"></h3>    
+
+					</div>
+
+					<select class="choice" id="choice1">
+						{% for item in components %}
+						
+						<option value="{{ item.id }}"> {{ item.name }} </option>
+					
+						{% endfor %}
+					</select>
+					<h3 id="result"></h3>
+					<br>
+					<hr>
+
+
+					<h2>Capacity</h2>
+					<div class="capacity btn_grid">
+						<div class="btn_wrap">
+							<button class="size selected">64GB</button>
+						</div>
+						<div class="btn_wrap">
+							<button class="size">128GB</button>
+						</div>
+					</div>
+
+					<h2>Colours</h2>
+					<div class="colours btn_grid">
+						<div class="btn_wrap">
+							<button type="button" class="colour blue selected" data-name="blue" data-colour="#2484E4">
+								Blue
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour red" data-name="red" data-colour="#AF1E2D">
+								Red
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour yellow" data-name="yellow" data-colour="#FFCE00">
+								Yellow
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour coral" data-name="coral" data-colour="#FF6C37">
+								Coral
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour white" data-name="white" data-colour="#EEEEEE">
+								White
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour black" data-name="black" data-colour="#212121">
+								Black
+							</button>
+						</div>
+					</div>
+					<button type="submit" class="submit" onclick="serverPoll()">ADD TO BASKET</button>
+
+					<hr>
+					<h2 id="serverValue">Titles here</h2>
+				</div>
+			</div>
+		</section>
+	</main>
+
+    <script>
+        var choice_els = document.querySelectorAll('.choice');
+    
+        for (let i=0; i < choice_els.length; i++) {
+            let element = choice_els[i];
+    
+            element.onchange = function get_value() {
+            document.querySelector('#selection').innerHTML = this.value;
+            console.log(this.value)
+
+            // Initialize new request
+            const request = new XMLHttpRequest();
+            const data_value = this.value;
+			request.open('POST', '/config', true);
+			
+			// Callback function for when request completes
+			request.onload = () => {
+
+				// Extract JSON data from request
+				const json_obj = JSON.parse(request.responseText);
+
+				// Update the result div
+				if (data.success) {
+					console.log(data.success)
+					const contents = `Components for the product ${data.id} ${json_obj}.`
+					document.querySelector('#result').innerHTML = contents;
+				}
+				else {
+					document.querySelector('#result').innerHTML = 'There was an error.';
+				}
+			}
+
+            // Add data to send with request
+            const data = new FormData();
+            data.append('data', data_value);
+
+
+            // Send request
+            request.send(data);
+            return false;
+
+            }
+        }
+    </script>
+	
+</body>
+</html>

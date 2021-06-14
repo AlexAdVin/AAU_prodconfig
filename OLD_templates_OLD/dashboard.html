@@ -1,0 +1,139 @@
+<html>
+<head>
+  <script>
+  window.onload = function() {
+    console.log("LOADED");
+
+    //Configuration variables
+    var updateInterval = 1000 //in ms
+    var numberElements = 100;
+
+    //Globals
+    var updateCount = 0;
+
+    // Chart Objects
+    var xAccelChart = $("#AmpsChart");
+
+    //chart instances & configuration
+
+    var commonOptions = {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              displayFormats: {
+                millisecond: 'mm:ss:SSS'
+              }
+            }
+          }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        },
+        legend: {display: false},
+        tooltips:{
+          enabled: false
+        }
+    };
+
+    var xAccelChartInstance = new Chart(xAccelChart, {
+        type: 'line',
+        data: {
+          datasets: [{
+              label: "Ampere",
+              data: 0,
+              fill: true,
+              borderColor: '#343e9a',
+              borderWidth: 1
+          }]
+        },
+        options: Object.assign({}, commonOptions, {
+          title:{
+            display: true,
+            text: "Ampere",
+            fontSize: 18
+          }
+        })
+    });
+
+
+
+    function addData(data) {
+      var data = data.rate;
+      //console.log(data.rate);
+
+      if(data){
+        xAccelChartInstance.data.labels.push(new Date());
+        xAccelChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data)});
+        console.log(data);
+
+        if(updateCount > numberElements){
+          xAccelChartInstance.data.labels.shift();
+          xAccelChartInstance.data.datasets[0].data.shift();
+        }
+        else updateCount++;
+        xAccelChartInstance.update();
+      }
+    };
+
+    function updateData(data) {
+
+      console.log("Update Data");
+
+      $.getJSON("/getValue", addData);
+      setTimeout(updateData,updateInterval);
+    }
+
+    updateData();
+  }
+</script>
+
+
+  <style>
+  .container{
+    display:flex;
+
+  }
+
+  .label{
+    flex:1;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .x{
+    flex:3;
+    text-align: center;
+    background-color: rgba(235, 113, 101, 0.73);
+    margin: 10px;
+  }
+
+
+  h1{
+    text-align: center;
+  }
+
+  </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+</head>
+
+<body>
+  <h1>Dashboard real time stream</h1>
+  <div id="labelAccel" class="label">
+    <h2> Readings sensor CT-013 </h2>
+  </div>
+  
+  <div id="accelContainer" class="container">
+
+    <div id="xAccel" class="x">
+      <canvas id="AmpsChart"></canvas>
+    </div><!--Amps-->
+
+  </div><!--accelContainer-->
+
+</body>
+</html>

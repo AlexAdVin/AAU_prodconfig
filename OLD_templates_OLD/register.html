@@ -1,0 +1,40 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+
+{% block body %}
+
+
+
+
+    <h1>Registration</h1>
+<div class="container">
+    <form action="" method="POST">
+
+        <div class="form-group">
+            <input type="text" class="form-control" name="name" placeholder="Full Name">
+        </div>
+
+        <div class="form-group">
+            <input type="text" class="form-control" name="username" placeholder="User Name">
+        </div>
+
+        <div class="form-group">
+            <input type="password" class="form-control" name="password" placeholder="Insert Password">
+        </div>
+
+        <div class="form-group">
+            <input type="password" class="form-control" name="confirm" placeholder="Confirm Password">
+        </div>
+
+        <div class="form-group">
+            <button class="btn btn-primary">Submit</button>
+        </div>
+
+    </form>
+</div>
+    
+{% endblock %}

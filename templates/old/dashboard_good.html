@@ -1,0 +1,153 @@
+<html>
+<head>
+  <script>
+  window.onload = function() {
+
+    console.log("LOADED");
+
+    //Configuration variables
+    var updateInterval = 500 //in ms
+    var numberElements = 100;
+
+    //Globals
+    var updateCount = 0;
+
+    // Chart Objects
+    var sensorChart = $("#ampsChart");
+
+    //chart instances & configuration
+
+    var commonOptions = {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              displayFormats: {
+                millisecond: 'mm:ss:SSS'
+              }
+            }
+          }],
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        },
+        legend: {display: true},
+        tooltips:{
+          enabled: false
+        }
+    };
+
+    var sensorChartInstance = new Chart(sensorChart, {
+        type: 'line',
+        data: {
+          datasets: [{
+              label: "I_rms",
+              data: 0,
+              fill: true,
+              borderColor: 'rgba(38, 34, 238, 0.73)',
+              borderWidth: 1
+          }]
+        },
+        options: Object.assign({}, commonOptions, {
+          title:{
+            display: true,
+            text: "Ampere",
+            fontSize: 18
+          }
+        })
+    });
+
+    function addData(data) {
+      var data = data.rate;
+      //console.log(data.rate);
+
+      if(data){
+        sensorChartInstance.data.labels.push(new Date());
+        sensorChartInstance.data.datasets.forEach((dataset) =>{dataset.data.push(data)});
+        console.log(data);
+
+        if(updateCount > numberElements){
+          sensorChartInstance.data.labels.shift();
+          sensorChartInstance.data.datasets[0].data.shift();
+        }
+        else updateCount++;
+        sensorChartInstance.update();
+      }
+    };
+
+    function updateData(data) {
+
+      console.log("Update Data");
+
+      $.getJSON("/get_RTOS", addData);
+      setTimeout(updateData,updateInterval);
+    }  
+    
+    updateData();
+
+  }
+
+</script>
+
+
+  <style>
+  .container{
+    display:flex;
+
+  }
+
+  .label{
+    flex:1;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .I{
+    flex:3;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.73);
+    margin: 10px;
+  }
+
+
+  h1{
+    text-align: center;
+  }
+
+  </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+
+  </head>
+
+
+<body>
+  <h1>Dashboard real time stream</h1>
+  <div id="labelAccel" class="label">
+    <h2> Readings sensor CT-013 </h2>
+</div>
+  
+  <div id="ampsContainer" class="container">
+
+    <div id="Irms" class="I">
+      <canvas id="ampsChart"></canvas>
+    </div><!--AmpsChart-->
+
+    
+
+  </div><!--ampsContainer-->  
+    
+    <p>Click the button to start sampling</p>
+    <button id="go_btn">Start sampling</button> 
+    <button name="stop_btn">Stop sampling</button>
+
+</body>
+
+<script>
+
+</script>
+
+</html>

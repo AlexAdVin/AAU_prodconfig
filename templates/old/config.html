@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Product Detail</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <script src="/static/main.js"></script>
+	<link rel="stylesheet" href="/static/main.css" />
+	<!--
+	<script src="/static/index.js"></script>
+	<script src="{{ url_for('static', filename='index.js') }}"></script> -->
+	
+    
+
+	<script type=text/javascript>
+		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
+</head>
+<body>
+    
+	<main>
+		
+
+
+
+		<section class="product-detail">
+			
+			<div class="imagery">
+				<img src="/static/images/xr-blue.png" alt="iPhone XR" class="image" />
+			</div>
+
+			<div class="detail">
+				<h1>iPhone XR</h1>
+				<h3>From £100 per month or £5000</h3>
+
+				
+				<div class="options">
+                    <h2>Products</h2>
+					<div class="btn_grid">
+
+                            <label>Choose product configuration:</label>
+
+                            <select class="btn_wrap" id="s1">
+                                {% for item in products %}
+                                
+                                <option value="{{ item.id }}"> {{ item.name }} </option>
+                            
+                                {% endfor %}
+                            </select>
+                    </div>
+
+					<br>
+
+					<ul class="btn_wrap" id="s2">
+
+						<li value=""></li>
+					
+					</ul>
+
+					<div class="capacity btn_grid">
+
+						<div class="btn_wrap" id="s3">
+
+							
+						
+						</div>
+					</div>
+
+					<h3 id="results"></h3>
+					<br>
+					<hr>
+
+
+                    <br>
+                    <hr>
+					<h2>Capacity</h2>
+					<div class="capacity btn_grid">
+						<div class="btn_wrap">
+							<button class="size selected" id="selction1">64GB</button>
+						</div>
+						<div class="btn_wrap">
+							<button class="size" id="selction2">128GB</button>
+						</div>
+					</div>
+
+					<h2>Colours</h2>
+					<div class="colours btn_grid">
+						<div class="btn_wrap">
+							<button type="button" class="colour blue selected" data-name="blue" data-colour="#2484E4">
+								Blue
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour red" data-name="red" data-colour="#AF1E2D">
+								Red
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour yellow" data-name="yellow" data-colour="#FFCE00">
+								Yellow
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour coral" data-name="coral" data-colour="#FF6C37">
+								Coral
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour white" data-name="white" data-colour="#EEEEEE">
+								White
+							</button>
+						</div>
+						<div class="btn_wrap">
+							<button type="button" class="colour black" data-name="black" data-colour="#212121">
+								Black
+							</button>
+						</div>
+					</div>
+					<button type="submit" class="submit">ADD TO BASKET</button>
+
+					<hr>
+					<h2 id="serverValue">Titles here</h2>
+				</div>
+			</div>
+		</section>
+	</main>
+
+    <script>
+
+        var choice_el = document.querySelector('#s1');
+    
+    
+		choice_el.onchange = function() {
+		//document.querySelector('#selection').innerHTML = this.value;
+		console.log("Sending to server:", this.value)
+
+		// Initialize new request
+		const request = new XMLHttpRequest();
+		const data_value = this.value;
+		request.open('POST', '/config', true);
+
+		request.onload = () => {
+			// Extract JSON data from request
+			const data = JSON.parse(request.responseText);
+
+			console.log("The callback", data.components)
+
+			// Update the result div
+			if (data.success) {
+
+				const compList = data.components;
+				//console.log(compList[0]["name"]);
+
+				var s2 = document.getElementById("s2");
+				s2.innerHTML = "";
+				
+				for(var item in compList){
+					//console.log(compList[item])
+					var newOption = document.createElement("input");
+
+					// Helper function to set multiple attributes to an element
+					function setAttributes(el, attrs) {
+						for(var key in attrs) {
+							el.setAttribute(key, attrs[key]);
+						}
+					}
+					
+					setAttributes(newOption, {
+						"type":"checkbox",
+						"id": "checkbox" + compList[item]["id"],
+						"value": compList[item]["id"]
+						
+					});
+
+					var newLabel1 = document.createElement("label");
+					newLabel1.setAttribute("for", "checkbox" + compList[item]["id"])
+
+					//newOption.value = compList[item]["id"];
+					newLabel1.innerHTML = compList[item]["name"];
+
+					var br = document.createElement("br");
+					//newOption.id = "test";
+					//console.log(newOption)
+					//console.log(s2);
+					s2.appendChild(newOption);
+					s2.appendChild(newLabel1);
+					s2.appendChild(br);
+					//console.log(s2[item].value);
+
+
+					
+				}
+
+
+
+				$(function() {                                      //https://flask.palletsprojects.com/en/1.1.x/patterns/jquery/
+					$('#s2').on('click', function() {
+						console.log("The selection is:",$( "input:checked" ).val())
+
+						$.getJSON($SCRIPT_ROOT + '/config', {
+							a: $( "input:checked" ).val()
+					}, 
+					// Callback
+					function(data) {
+
+						const propList = data.properties;
+						console.log("The response is:", propList);
+
+						var s3 = document.getElementById("s3");
+						s3.innerHTML = "";
+
+
+						for(var item in propList){
+							const newButton = document.createElement("button");
+							// Helper function to set multiple attributes to an element
+							function setAttributes(el, attrs) {
+								for(var key in attrs) {
+									el.setAttribute(key, attrs[key]);
+								}
+							}
+							setAttributes(newButton, {
+								"class":"submit",
+								"name": "material",
+								"id": "selection" + propList[item]["id"],
+								"value": propList[item]["id"]
+
+							});
+
+							newButton.innerHTML = propList[item]["name"];
+
+							s3.appendChild(newButton);					
+						}
+
+			
+					});
+					return false;
+				});
+				});
+				
+			}
+			else {
+				document.querySelector('#result').innerHTML = 'There was an error.';
+			}
+
+		}
+
+		// Add data to send with request
+		const data = new FormData();
+		data.append('dataClient', data_value);
+
+
+		// Send request
+		request.send(data);
+		return false;
+
+		
+        }
+
+
+		
+    </script>
+	
+</body>
+</html>

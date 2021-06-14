@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Books
+{% endblock %}
+
+{% block body %}
+
+
+    <h1>All Books</h1>
+
+    <ul>
+        {% for book in books %}
+            <li>
+                <a href="{{ url_for('search', book_id=book.id) }}">
+                    {{ book.title }} 
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

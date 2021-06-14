@@ -1,0 +1,110 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Book
+{% endblock %}
+
+{% block body %}
+
+
+
+            <h1>Book Details</h1>
+
+            <hr>
+
+            <div class="col-sm-12">
+
+                <div class="row">
+
+                    <div class="col-sm-4">
+
+                        <div class="fakeimg">Fake Image</div>
+
+                    </div>
+
+                    <div class="col-sm-8">
+                        <h4>Title: {{ book.title }}</h4><br>
+                        <ul class="nav nav-pills flex-column">
+                            ISBN: {{ book.isbn }} <br> 
+                            Author: {{ book.author }} <br>
+                            Year: {{ book.year }} <br>
+                        </ul>
+                        <hr>
+                        
+                        <h5>From the API</h5>
+                        <ul class="nav nav-pills flex-column">
+                        Number of ratings: {{ ratings }}<br>
+                        The average rating is: {{ avg_rating }} out of 5.0<br>
+                        </ul>
+                        <hr>
+
+                        <h5>Commentary section:</h5>
+
+                        {% for item in commentary_list %}
+                        
+                        User {{ sesion_var }} rated this movie {{ rating }} stars out of 5:
+                        
+                        <br>Comment: {{ item.comments }}
+                                               
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                    <div class="form-group">
+                        <a href="{{ url_for('search') }}">
+                            <button class="btn btn-primary">
+                                Back to search
+                            </button>
+                        </a>
+                    </div>
+
+            </div>
+        
+    
+        <div class="col-sm-4">
+
+
+            <form action="{{ url_for('submit', book_id=book.id) }}" method="POST">
+
+                <div class="form-group">
+                    <h3>Rate your favourite book</h3>
+    
+                    <input type="radio" name="ratings" value="1" /> 1
+                    <input type="radio" name="ratings" value="2" > 2
+                    <input type="radio" name="ratings" value="3" /> 3
+                    <input type="radio" name="ratings" value="4" > 4
+                    <input type="radio" name="ratings" value="5" checked> 5
+                </div>
+    
+                <div class="form-group">
+                    <h3>Comment on your rating</h3>
+    
+                    <br>
+                    <textarea 
+                    rows="10" 
+                    cols="30" 
+                    name="comments" 
+                    placeholder="Enter text here...">
+                    </textarea>
+    
+                    <br>
+                    <a href="{{ url_for('submit', book_id=book.id) }}">
+                        <button class="btn btn-primary">
+                            Submit review
+                        </button>
+                    </a>
+                </div>
+
+            </form>
+
+
+        </div>
+
+
+        
+
+
+
+{% endblock %}

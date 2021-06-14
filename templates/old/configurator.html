@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Product Detail</title>
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="/static/main.js"></script>
+	<link rel="stylesheet" href="/static/main.css" />
+	<script type=text/javascript>
+		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
+</head>
+<body>
+    
+	<main>
+		<section class="product-detail">
+			
+			<div class="imagery">
+				<img src="/static/images/xr-blue.png" alt="iPhone XR" class="image" />
+			</div>
+
+			<div class="detail">
+				<h1>AAU Phone</h1>
+				<h3>Configure your phone</h3>
+				<div class="configuration">
+
+					<form action="{{ url_for('createModel') }}" method="post">
+						<label>Name your model:</label>
+						
+						<div class="form-group">
+							<input class="form-control" name="P_name" placeholder="Enter product name">
+						</div>
+						<br>
+						
+
+						<div class="form-group">
+							<button class="submit">Create model</button>
+						</div>
+
+					</form>
+
+					<div id="test1"></div>
+					<div id="test2"></div>
+
+					
+				</div>
+			</div>
+		</section>
+	</main>
+
+    <script>
+	
+	
+       
+    </script>
+	
+</body>
+</html>

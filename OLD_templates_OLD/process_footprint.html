@@ -1,0 +1,75 @@
+{% extends "layout2.html" %}
+
+
+
+{% block body %}
+
+
+
+<h2>Process activity data</h2>
+<p>Process activity data are physical measures of a process that results in GHG emissions or removals. 
+    These data capture the physical inputs, outputs, and other metrics of the product’s life cycle. 
+    Process activity data, when combined with a process emission factor, result in the calculation of GHG emissions.</p>
+
+
+<button class="accordion">Electricity Consumption</button>
+<div class="panel">
+    <form id="electricity" action="" oninput="x.value=parseInt(a.value)*choice1.value">  
+        <label for="a">Yearly kWh:</label><br>
+        <input type="number" id="a" name="kWh_field" value="">
+    
+        <label for="choice1">Choose country:</label>
+        <select id="choice1" onchange="get_value()">
+            {% for item in nu %}
+            
+            <option value="{{ item.el_value }}"> {{ item.country }} </option>
+        
+            {% endfor %}
+        </select> =
+    
+        <output name="x" for="a b"></output> kgCO2e
+        <br><br>
+      <input type="submit">
+    </form>
+</div>
+
+<button class="accordion">Employee commuting</button>
+<div class="panel">
+  <form id="electricity" action="" oninput="x.value=parseInt(a.value)*choice1.value">  
+    <label for="a">Yearly Km:</label><br>
+    <input type="number" id="a" name="kWh_field" value="">
+
+    <label for="choice2">Choose country:</label> <br>
+    <select id="choice2" onchange="get_value()">
+        {% for item in nu_trans %}
+        
+        <option value="{{ item.value }}"> {{ item.vehicle }} </option>
+    
+        {% endfor %}
+    </select> =
+
+    <output name="x" for="a b"></output> kgCO2e
+    <br><br>
+  <input type="submit">
+</form>
+</div>
+
+<button class="accordion">Section 3</button>
+<div class="panel">
+  <p>Lorem ipsum...</p>
+</div> 
+
+
+<hr>
+<h5 id= "Selection">Title description, Sep 2, 2017</h5>
+
+
+<script>
+    
+    document.querySelector('#choice2').onchange = function get_value() {
+    document.querySelector('#Selection').innerHTML = this.value;
+    console.log(this.value)
+};
+</script>
+
+{% endblock %}

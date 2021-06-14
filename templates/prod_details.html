@@ -1,0 +1,373 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+  Product details
+{% endblock %}
+
+
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% endblock %}
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+
+
+  <div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+          
+    <div class="container">
+
+        <h2>Product details</h2>
+        {% if userObj %}
+        <h4>Full name: {{ session['name'] }}</h4>
+        {% endif %}
+        <p>Available information about the configured product</p>
+        
+        
+        <div class="row">
+
+          <div class="col-sm-6">
+            <div class="card">
+              <h5 class="card-header">Product info</h5>
+              <div class="card-body">
+
+                <p  class="card-text">Details about the product:</p>
+                <div class="row">
+
+
+                  <div class="col-sm-3">
+                    <label for="fname"><b>Product ID</b>:</label><br><br>
+
+                  </div>
+
+                  <div class="col-sm-3">
+                    <input type="text" id="p_ID" name="oID" value="{{ prod.id }}" disabled><br><br>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <h5>Total carbon footprint</h5>
+                    <h1 style="display: inline;" id="total_CO2e">2.69</h1><h3 style="display: inline;"> gCO2e</h3>
+                    <img style="width: 70%;" src="{{ url_for('static', filename='images/cloud_co2.jpg') }}" alt="">
+                  </div>
+
+                  <div class="col-sm-6">
+                    <form action="" method="post">
+                      <h5 class="card-title">Special title treatment</h5>
+                      <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                      <input type="text" id="fname" name="pdf"><br><br>
+                      <button class="btn btn-primary" name="pdf">PDF</button> 
+                    </form>
+                  </div>
+
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <br>
+
+        <div class="row">
+
+          <div class="col-sm-12">
+            <div class="card">
+              <h5 class="card-header">Product details</h5>
+              <div class="card-body">
+                <p class="card-text">Details about the product:</p>
+                
+              <div class="container">
+                <div class="row">
+
+                  <div class="col-sm-8"></div>
+                
+
+                  <div class="col-sm">
+                    <img src="{{ url_for('static', filename='images/xr_test.jpg') }}" alt="">
+                  </div>
+                  
+                </div>
+
+                <div class="col-sm-12">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Configuration (components)</th>
+                          <th>Part no.</th>
+                          <th>Dimension [mm]</th>
+                          <th>Property</th>
+                          <th>Carbon footprint [gCO2e]</th>
+                        </tr>
+                      </thead>
+
+                      {% for comp in comps %}
+                      <tbody>
+                        <tr>
+                          <td>{{ comp.name }}</td>
+                          <td>{{ comp.part_no }}</td>
+                          <td>{{ comp.dimensions }}</td>
+
+                          {% for prop in comp.properties %}
+                          <td>{{ prop.material_name }}</td>
+                          <td>{{ prop.emissionData_value }}</td>
+                        </tr>
+                      </tbody>
+
+                      {% endfor %}
+                      {% endfor %}
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+
+              
+              </div>
+
+
+                
+              </div>
+          </div>
+        
+        </div>
+
+        <!-- Routing details -->
+        <div class="row">
+
+          <div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+  
+          <div class="col-sm-12">
+            <div class="card">
+              <h5 class="card-header">Routing details</h5>
+              <div class="card-body">
+                <p class="card-text">Details about the manufacturing routing, consumption data and the electric energy emission factor.</p>
+  
+                
+                <div class="row">
+  
+  
+                  <div class="col-sm-3">
+                    <div class="card">
+                      <img src="{{ url_for('static', filename='images/Festo_w444.png') }}" alt="">
+                    </div>
+                    <h5>Total carbon footprint</h5>
+                    <h3 class="card-header" id="total_gCO2e"></h3><h3 style="display: inline;"> gCO2e</h3>
+                    
+                  </div>
+
+  
+  
+                  <div class="col-sm">
+                    
+                    <div class="row">
+  
+                      <div class="container">
+                        
+                        <div class="table-responsive">
+                          <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th>Process/Activity</th>
+                                <th>Work time [s]</th>
+                                <th>Electric energy [Wh]</th>
+                                <th>Electric energy used by compressed air [Wh]</th>
+                                <th>Total Wh</th>
+                                <th>
+                                  <a href="https://en.energinet.dk/About-our-reports/Reports/Environmental-Report-2018" target="_blank">Emission factor gCO2e/kWh</a>
+                                </th>
+                              </tr>
+                            </thead>
+  
+                            <tbody>
+
+                              
+                                {% for Wh in prod_info.activities %} 
+                                  {% set item_1 = prod_info.activities[loop.index-1] %}
+                                  {% set item_2 = prod_info.act_dt[loop.index-1] %}
+                                  {% set item_3 = prod_info.act_el[loop.index-1] %}
+                                  {% set item_4 = prod_info.act_air[loop.index-1] %}
+                                  {% set item_5 = prod_info.act_Wh[loop.index-1] %}
+
+                                  
+                                  
+                              <tr>
+                              
+                              
+                                <td>{% for item in item_1 %}{{ item }} {% endfor %} </td>
+                                <td>{% for el in item_2 %}{{ el }} {% endfor %} </td>
+                                <td>{% for el in item_3 %}{{ el }} {% endfor %} </td>
+                                <td>{% for el in item_4 %}{{ el }} {% endfor %} </td>
+                                <td>{% for el in item_5 %}{{ el }} {% endfor %} </td>
+
+                                      {% endfor %}
+                                        
+
+                                    
+                                  <!--
+                                <td>{% for item in prod_info.act_dt %} 
+                                  {% for i in item %}
+                                    {{ i }} 
+                                  {% endfor %}
+                                {% endfor %}</td>
+
+                                <td>{% for item in prod_info.act_el %} 
+                                  {% for i in item %}
+                                    {{ i }} 
+                                  {% endfor %}
+                                {% endfor %}</td>
+
+                                <td>{% for items in prod_info.act_air %} 
+                                  {% for air in items %}
+                                    {{ air }} 
+                                  {% endfor %}
+                                {% endfor %}</td>-->
+
+                              </tr>
+                         
+                              
+                            </tbody>
+                            
+  
+                          </table>
+                        </div>
+                        
+                      </div>
+  
+                    </div>
+  
+                  </div>
+                  
+                </div>
+  
+              
+              </div>
+  
+              </div>
+            </div>
+          </div>
+          
+        </div>
+    </div>
+
+
+
+
+
+<input type="text" id="check" value="{{ test }}" >
+        
+    </div>
+  
+  </div>
+
+
+</section>
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!--
+<script src="{{ url_for('static', filename='co2api.js') }}"></script>
+-->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var checkit = document.querySelector("#check").value
+    var prod_info = JSON.parse(checkit)
+    console.log(prod_info)
+    //document.getElementById("check").innerHTML = "Sugi pula"
+    
+
+    console.log("From server:", prod_info)//, "\nproperty: ", data.prop );
+              
+    var compList = prod_info.components;
+    var actList = prod_info.activities;
+
+    var tBody = document.querySelector("#t_body");
+
+    document.getElementById('total_gCO2e').innerHTML = prod_info.total_gCo2e_kWh;
+
+    for (let index = 0; index < compList.length; index++) {
+                
+      var c_name = compList[index];
+      var c_Wh = prod_info.comp_Wh[index];
+
+      console.log("element from server:", c_name,c_Wh, "itteration:", index)
+
+      for (let i = 0; i < actList[index].length; i++) {
+
+        //console.log("check lenght:", compList[index].property[0].length)
+
+        var a_name = actList[index][i];
+        var act_dt = prod_info.act_dt[index][i];
+        var act_el = prod_info.act_el[index][i];
+        var act_air = prod_info.act_air[index][i];
+        var act_Wh = prod_info.act_Wh[index][i];
+        
+
+        //console.log("activityList:",a_name, "\nEmission value:", act_Wh, "\nTotal:", tot_Wh )
+
+        //var Trow = document.createElement("tr");
+        /*
+        var Trow = document.getElementById("testTR")
+
+        var td_aName = document.getElementById("testTD1");
+        var td_dt = document.getElementById("testTD2");
+        var td_el = document.getElementById("testTD3");
+        var td_air = document.getElementById("testTD4");
+        var td_Wh = document.getElementById("testTD5");
+        
+        
+        //var td_aName = document.createElement("td");
+        //var td_dt = document.createElement("td");
+        //var td_el = document.createElement("td");
+        //var td_air = document.createElement("td");
+        //var td_Wh = document.createElement("td");
+        
+        td_aName.innerHTML = a_name;
+        td_dt.innerHTML= act_dt;
+        td_el.innerHTML= act_el;
+        td_air.innerHTML= act_air;
+        td_Wh.innerHTML= act_Wh;
+
+
+        Trow.append(td_aName);
+        Trow.append(td_dt);
+        Trow.append(td_el);
+        Trow.append(td_air);
+        Trow.append(td_Wh);
+
+
+        tBody.append(Trow)
+        */
+
+      }
+
+    }
+  });
+</script>
+
+
+{% endblock %}

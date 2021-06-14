@@ -1,0 +1,220 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+
+
+
+
+{% block body %}
+<!--Section: create product entry-->
+<section>
+    <div class="row">
+        <div class="col-xl-6 col-md-12 mb-4">
+            <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+                <div class="card" name="create product entry">
+
+                    <div class="card-header">
+                        <h5 class="mb-0 text-center"><strong>1. Create an entry for a product model</strong></h5>
+                    </div>
+    
+                    <div class="card-body">
+                        <form action="{{ url_for('createComponent') }}" method="post">
+                            
+                                <div class="form-group">
+                                    <input class="form-control" name="P_name" placeholder="Enter a name for a product">
+                                </div>
+                                <br>
+                          
+                                <button class="btn btn-primary btn-block">Create product</button>
+                                
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-xl-6 col-md-12 mb-4">
+            <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+                <div class="card" name="products">
+
+                    <div class="card-header">
+                        <h5 class="mb-0 text-center"><strong>2. Select from product models</strong></h5>
+                    </div>
+    
+                    <div class="card-body">
+                        <p>Choose an instance of the product model:</p>
+                        <ul>
+                                {% for item in products %}
+
+                                <div class="card2">
+
+
+                                    <a style="text-decoration:none" class="btn2" href="{{ url_for('view', prod_id=item.id) }}">Select model: {{ item.name }} </a>
+                                </div>
+                                <br>
+
+                                {% endfor %}
+
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+<!--Section: create product entry-->
+
+<!--Section: create component entry-->
+<section>
+    <div class="row">
+        <div class="col-xl-6 col-md-12 mb-4">
+            <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+                <div class="card" name="products">
+
+                    <div class="card-header">
+                        <h5 class="mb-0 text-center"><strong>3. Create components for product model</strong></h5>
+                    </div>
+    
+                    <div class="card-body">
+                        <form action="{{ url_for('createComponent') }}" method="post">
+							
+							<p>For product:</p>
+        
+							<select class="form-control" name="prod_id">
+								{% for item in products %}
+									<option value="{{ item.id }}">{{ item.name }}</option>
+								{% endfor %}
+							</select>
+							<hr>
+
+							<p>Create component:</p>
+        
+							<div class="form-group">
+								<input class="form-control" name="C_name" placeholder="Enter component name"><br>
+								<input class="form-control" name="part_no" placeholder="Enter part_no"><br>
+								<input class="form-control" name="dimensions" placeholder="Enter dimensions"><br>
+								
+							</div>
+
+                                <button class="btn btn-primary btn-block">Create component</button>
+					    </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-xl-6 col-md-12 mb-4">
+            <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+                <div class="card">
+
+                    <div class="card-header">
+                        <h5 class="mb-0 text-center"><strong>4. Create properties for chosen product</strong></h5>
+                    </div>
+    
+    
+                    <div class="card-body">
+                        <ul>
+                        
+                        <p>For component:</p>
+                        
+                        <form action="{{ url_for('show') }}"method="POST" id="usrform">
+                            <select class="form-control" name="comp_id">
+                                {% for item in BOM %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <hr>
+
+                            <p>Create property:</p>
+                            <div class="form-group">
+                                <input class="form-control" name="material_name" placeholder="Enter material name"><br>
+                                <input class="form-control" name="eData_value" placeholder="Enter emission data ( gCO2e )"><br>
+                                <input class="form-control" name="UUID" placeholder="Enter UUID for LCI dataset"></input><br>
+                                <button class="btn btn-primary btn-block" id="createProp">Create property</button>       
+                                
+                            </div>
+                        </form>
+                                <h5 id="result"></h5>
+
+                            </div>
+                        
+                        
+                        </ul>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</section>
+<!--Section: create product entry-->
+
+
+
+
+<!--Section: Statistics with subtitles-->
+<section>
+<div class="row">
+	
+</div>
+</section>
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+<style>
+    .card2 {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      margin: auto;
+      text-align: center;
+      font-family: arial;
+    }
+    
+    .title {
+      color: grey;
+      font-size: 18px;
+    }
+    
+    .btn2 {
+      border: none;
+      outline: 0;
+      display: inline-block;
+      padding: 8px;
+      color: white;
+      background-color: #000;
+      text-align: center;
+      cursor: pointer;
+      width: 100%;
+      font-size: 18px;
+    }
+    
+    
+    button:hover, a:hover {
+      opacity: 0.7;
+    }
+    </style>
+
+{% endblock %}

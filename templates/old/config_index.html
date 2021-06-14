@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Create product
+{% endblock %}
+
+{% block body %}
+    <h1>Create a product</h1>
+
+    <form action="{{ url_for('createComponent') }}" method="post">
+
+        <div class="form-group">
+            <input class="form-control" name="P_name" placeholder="Product Name">
+        </div>
+
+
+        <div class="form-group">
+            <button class="btn btn-primary">Create product</button>
+        </div>
+
+    </form>
+
+    <hr>
+
+    <h1>Create components for product</h1>
+
+    <form action="{{ url_for('createComponent') }}" method="post">
+
+        <p>For product:</p>
+        <div class="form-group">
+            <select class="form-control" name="prod_id">
+                {% for item in products %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <p>Create component:</p>
+        
+        <div class="form-group">
+            <input class="form-control" name="C_name" placeholder="Component name">
+            <input class="form-control" name="part_no" placeholder="Part_no">
+            <input class="form-control" name="dimensions" placeholder="Enter dimensions">
+            <button class="btn btn-primary">Create component</button>
+        </div>
+
+    </form>
+
+
+<br>
+<hr>
+    <h1>View components for product</h1>
+
+    <h2>All Products</h2>
+
+    <ul>
+        {% for item in products %}
+            <li>
+                <a href="{{ url_for('view', prod_id=item.id) }}">
+                    {{ item.name }} 
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+
+
+    <p>BOM for product chosen</p>
+
+    <ul>
+        {% for item in BOM %}
+    
+        <li>{{item.name}}</li>
+    
+        {% endfor %}
+    </ul>
+
+    
+    <form id="frm1" method="POST">
+
+        <p>Create property:</p>
+
+        <div class="form-group">
+            <input class="form-control" id="material_name" placeholder="Enter material name">
+            <input class="form-control" id="eData_value" placeholder="Enter emission data">
+            <input class="form-control" id="eData_unit" placeholder="Enter emission data unit">
+
+ For component:
+            <select class="form-control" id="sel1">
+                {% for item in BOM %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>        
+            <span id=result>?</span>
+        </div>
+    </form>
+
+    
+
+<br>
+<hr>
+
+
+
+<script type=text/javascript>
+    
+    $(function() {                                      //https://flask.palletsprojects.com/en/1.1.x/patterns/jquery/
+        $('#sel1').on('change', function() {
+            $.getJSON($SCRIPT_ROOT + '/_show', {
+            a: $('#sel1').val(),
+            b: $('#material_name').val(),
+            c: $('#eData_value').val(),
+            d: $('#eData_unit').val(),
+        }, 
+        
+        function(data) {
+            $("#result").text(data.result);
+            console.log(data);
+
+        });
+        return false;
+        });
+    });
+
+    
+
+    
+  </script>
+
+{% endblock %}
+
+
+

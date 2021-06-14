@@ -1,0 +1,151 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+  Order inquiry
+{% endblock %}
+
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+
+
+  <div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+          
+      <div class="row">
+        <div class="col">
+        <h3>Order inquiry</h3>
+        <p>Billing information:</p>
+        <hr>
+        {% if userObj %}
+        <h6>Full name: {{ session['name'] }} </h6> <!--{{ session['name'] }}-->
+        <h6>Address: Industrivej 33, Vodskov</h6>
+        <h6>Phone: +452670733</h6>
+        <h6>E-mail: mj@mdistribution.dk</h6>
+        <hr>
+        </div>
+
+        <div class="col"></div>
+
+        <div class="col"></div>
+
+        <div class="col"></div>
+
+      </div>
+        {% endif %}
+
+           
+        
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr id="total">
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Configuration</th>
+                <th>Upstream gCO2e</th>
+                <th>Wh for AAU assembly operations:<br></th>
+                <th>Amount to order (pieces)</th>
+                <th>LIVE data <br>gCO2e / kWh</th>
+                <th>Plan order <br>for lowest gCO2e/kWh</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+  
+              </tr>
+              
+              {% for product in products %}
+              <tr>
+                <form action="{{ url_for('createOrder') }}" method="post">
+  
+                  <td>
+                    <a href="{{ url_for('showProd', prod_id=product.id)}}">{{ product.id }}</a>
+                    <input hidden class="form" name="prod_id" value="{{ product.id }}">
+                  </td>
+                  <td><a href="{{ url_for('showProd', prod_id=product.id)}}">{{ product.name }}</a></td>
+                  <td>
+                    {% for comp in product.components %}
+                      {{ comp.name }}<br>
+                    {% endfor %}
+                  </td>
+                  <td>
+                    {% for comp in product.components %}
+                    {% for prop in comp.properties %}
+                      {{ prop.material_name }}<br>->
+                      {{ prop.emissionData_value }}<br>
+                    {% endfor %}
+                    {% endfor %}
+                  </td>
+                  
+                  
+                  <td> 
+                  
+
+                    {{ product.AAU_Wh }} 
+
+                  </td>
+                  
+
+                  <td><input class="form" name="o_qnty" placeholder="Pieces to produce"></td>
+                  <td>
+                    <b><h2 id="CO2e_now"></h2></b>
+                    <p>Timestamp:</p>
+                    <b><p id="t_stamp_now"></p></b>
+                    <!-- kgCO2e / kWh: <b>{{ CO2e_now }}</b> <br> Timestamp: <b>{{ t_stamp_now }}</b> -->
+                  </td>
+                  <td>
+  
+                    <!-- Rounded switch -->
+                    <label class="switch">
+                      <input id="inlineRadio1" name ="o_pln" type="checkbox" value="1">
+                      <span id="inlineRadio1" class="slider round"></span> 
+
+                      
+                    </label>
+                  </td>
+  
+                  <td>
+                    <input class="btn btn-outline-success" type="submit" name="submit" value="Submit" />
+                  </td>
+                </form>
+              </tr>
+              {% endfor %}
+    
+            </tbody>
+          </table>
+        </div>
+        
+  
+  </div>
+
+
+</section>
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<!-- AJAX -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Energidataservice API -->
+<script src="{{ url_for('static', filename='co2api.js') }}"></script>
+
+
+
+{% endblock %}
+

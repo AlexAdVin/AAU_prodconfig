@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Product Detail</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="/static/main.css" />
+	<script type=text/javascript>
+		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
+</head>
+
+<body>
+    
+	<main>
+		<section class="product-detail">
+			
+			<div class="imagery">
+				<img src="/static/images/xr-blue.png" alt="iPhone XR" class="image" />
+			</div>
+
+			<div class="detail">
+				<h1>AAU Phone</h1>
+				<h3>Configure your phone</h3>
+				<div class="configuration">
+
+					
+						<label>Your chosen name:</label>
+						
+						<div class="form-group">
+							<input class="form-control" name="P_name" placeholder="Enter product name">
+						</div>
+						<br>
+
+
+						<p>
+						  <input type="checkbox" id="95" name="component" value="Bottom_Housing" checked="checked" disabled> Bottom housing<br>
+						  <input type="checkbox" id="96" name="component" value="PCB">PCB<br>
+						  <input type="checkbox" id="97" name="component" value="Fuse_L" disabled>Fuse 1<br>
+						  <input type="checkbox" id="98" name="component" value="Fuse_R" disabled>Fuse 2<br>
+						  <input type="checkbox" id="99" name="component" value="Top_Housing">Top Housing<br>
+						</p>
+
+						
+
+						<div class="form-group">
+							<button class="submit" id="configure" onclick="work()">Create configuration</button>
+						</div>
+
+					
+
+					<div id="test1"></div>
+					<div id="test2" hidden>
+						{{prod_id}}
+					</div>
+					<ul>
+						<li id="result"></li>
+					</ul>
+
+					
+				</div>
+			</div>
+		</section>
+	</main>
+
+    <script>
+	
+	
+
+
+
+	$('input[type=checkbox]').on('change', function() {			//https://stackoverflow.com/questions/48220938/howto-update-multiple-checkbox-values-at-once-on-a-array-variable-using-jquery
+		// Fuses are only available if PCB is on
+		if(! document.getElementById('96').checked) {
+		//I am checked
+			document.getElementById("97").disabled = true;
+			document.getElementById("98").disabled = true;
+			document.getElementById('97').checked = false;
+			document.getElementById('98').checked = false;
+		}else{
+			document.getElementById("97").disabled = false;
+			document.getElementById("98").disabled = false;
+		}
+
+		var checked = [];
+		//const jArray = {};
+
+	    $("input[type='checkbox']:checked").each(myEach);
+		function myEach(index, jsonObj) {
+
+		/*
+		jArray[index] = {
+			id: this.id,
+			value: this.value
+		};*/
+
+			checked.push({
+			id: this.id,
+			name: this.value
+			});
+
+		
+		//checked[checked.length] = this.value; 
+		//var id = this.id;
+		
+		//jArray[id] =  this.value; //jArray[id] = (this.checked ? this.value : 0)
+
+		};
+		console.log(checked);
+	
+		var jsonObj = JSON.stringify(checked);
+		localStorage.setItem("testJSON", jsonObj);
+
+	});
+
+	var prod_id = document.getElementById("test2").innerHTML; 
+	
+	function work(){ 	
+		testMe = localStorage.getItem("testJSON")
+		console.log('Server request...', JSON.parse(testMe));
+		$.get($SCRIPT_ROOT + '/createModel', 		// $.post(URL,data,callback);
+		{
+			a: testMe,
+			b: prod_id
+		}, 
+	
+		function(data, status) {
+			console.log("From server:", data.comp, "\nStatus: " + status);
+			let compList = data.comp;
+			for (let index = 0; index < compList.length; index++) {
+				const element = compList[index].name;
+				var br = document.createElement("br");
+				console.log("element:", element)
+				document.getElementById("result").append(element);
+				document.getElementById("result").append(br);
+			}
+			 
+		});
+		return false;
+
+	};
+	
+        
+    </script>
+	
+</body>
+</html>

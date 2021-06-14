@@ -1,0 +1,191 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Resources
+{% endblock %}
+
+
+
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+
+<div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+            
+  <div class="container">
+      <h2>Resources</h2>
+      <p>The manufacturing resources for a particular workstation</p>            
+      <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Choose workstation</th>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Ressource ID</th>
+            <th>Create</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <form action="{{ url_for('resources') }}" method="post">
+              
+              <td>
+                
+                  <select id="sel_op" name="sel_op">
+                    {% if workstations %}
+                    {% for op in workstations %}
+                    <option value="{{ op.id }}">{{ op.description }}</option>
+                    {% endfor %}
+                    {% endif %}
+                  </select>
+                
+              </td>
+              
+              <td><label for="img">Select image:</label><input type="file" id="img" name="img" accept="image/*"></td>
+              <td><input class="form" name="r_name" placeholder="Enter resource name"></td>
+              <td><input class="form" name="r_id" placeholder="Enter ID for resource"></td>
+              <td><button class="btn btn-secondary">+</button></td>
+            </form>
+          </tr>
+          
+          {% if ress %}
+            {% for res in ress %}
+            <tr>
+
+                <td>{{ res.operation_id }}</td>
+
+                <td width="10px" height="10px">
+                  <img class="img-fluid" src="{{ img_file }}">
+                </td>
+                <td>{{ res.name }}</td>
+                <td>{{ res.ip_address }}</td>
+            </tr>
+            {% endfor %}
+          {% endif %}
+          
+          
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+</section>
+
+
+<section>
+
+  <div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+              
+    <div class="container">
+        <h2>Operations / Activities</h2>
+        <p>The activities performed by a resource</p>            
+        <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Choose resource</th>
+              <th>Property</th>
+              <th>Activity name</th>
+              <th>Operation Number</th>
+              <th>Work time [s]</th>
+              <th>Electric energy [J]</th>
+              <th>Pneumatic energy [J]</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <form action="{{ url_for('resources') }}" method="post">
+                
+                
+                <td>
+                    <select id="sel_res" name="sel_res">
+                      {% if ress %}
+                        {% for res in ress %}
+                          <option value="{{ res.id }}">{{ res.name }}</option>
+                        {% endfor %}
+                      {% endif %}
+                    </select>
+                </td>
+
+                <td>
+                  <select id="sel_prop" name="sel_prop">
+                    {% for comp in components %}
+                      {% for prop in comp.properties %}
+                        <option value="{{ prop.id }}">For {{comp.name}} - {{ prop.material_name }}</option>
+                      {% endfor %}
+                    {% endfor %}
+                    </select>
+                </td>
+                
+                <td><input class="form" name="a_name" placeholder="Enter activity name"></td>
+                <td><input class="form" name="a_OpNo" placeholder="Enter OpNo"></td>
+                <td><input class="form" name="a_wt" placeholder="Enter work time [s]"></td>
+                <td><input class="form" name="a_ee" placeholder="Enter electric energy [J]"></td>
+                <td><input class="form" name="a_pe" placeholder="Enter pneumatic energy [J]"></td>
+                <td><button class="btn btn-secondary">+</button></td>
+              </form>
+            </tr>
+            {% for a in act %}
+            <tr>
+              <td>{{ a.resID }}</td>
+              <td></td>
+              <td>{{ a.name }}</td>
+              <td>{{ a.delta_t }}</td>
+              <td>{{ a.el_energy }}</td>
+              <td>{{ a.air_energy }}</td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+  </div>
+  
+  
+  </section>
+
+
+
+  <!-- Modal
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Delete operation and all the resources assigned to it?</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <form action="" method="post">
+            <input class="btn btn-danger" type="submit" value="Delete">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  -->
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+
+{% endblock %}

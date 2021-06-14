@@ -1,0 +1,201 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Configure your product
+{% endblock %}
+
+
+
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+<div class="row">
+	<div class="col-xl-6 col-md-12 mb-4">
+        <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+			<div class="card" name="create product entry">
+
+				<div class="card-header">
+					<h5 class="mb-0 text-center"><strong>Name your product</strong></h5>
+				</div>
+
+
+				<div class="card-body">
+					<form action="{{ url_for('configurator') }}" method="post">
+                            
+						<div class="form-group">
+							<input class="form-control" name="P_name" placeholder="Product Name">
+						</div>
+						<br>
+				  
+						<button class="btn btn-primary btn-block">Create product</button>
+						
+					</form>
+				</div>
+
+			</div>
+
+        </div>
+    </div>
+
+
+<!-- The grid: four columns -->
+
+<div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px" id="container"> 
+<div class="row" >			
+	{% for item in products %}
+	<div class="column">
+		<div class="card2" >
+			<div class="col">
+				<img src="{{ url_for('static', filename='images/xr_test.jpg') }}" alt="" style="width:50%">
+				
+			</div>
+			<div class="col">
+				{% for comp in item.components %}
+				{{ comp.name }}<br>
+				{% endfor %}
+			</div>
+			<a style="text-decoration:none" class="btn2" href="{{ url_for('view', prod_id=item.id) }}">Select model: {{ item.name }} </a>
+		</div>
+		<br>
+		
+	</div>
+{% endfor %}
+</div>
+</div>
+
+  
+  <!-- The expanding image container -->
+<div class="container">
+	<!-- Close the image -->
+	<span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span>
+  
+	<!-- Expanded image -->
+	<img id="expandedImg" style="width:100%">
+  
+	<!-- Image text -->
+	<div id="imgtext"></div>
+  </div>
+</div>
+</section>
+{% endblock %}
+
+
+{% block script %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+<style>
+    .card2 {
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      max-width: 300px;
+      margin: auto;
+      text-align: center;
+      font-family: arial;
+    }
+    
+    .title {
+      color: grey;
+      font-size: 18px;
+    }
+    
+    .btn2 {
+      border: none;
+      outline: 0;
+      display: inline-block;
+      padding: 8px;
+      color: white;
+      background-color: #000;
+      text-align: center;
+      cursor: pointer;
+      width: 100%;
+      font-size: 18px;
+    }
+    
+    
+    button:hover, a:hover {
+      opacity: 0.7;
+    }
+
+	/* The grid: Four equal columns that floats next to each other */
+.column {
+  float: left;
+  width: 25%;
+  padding: 10px;
+}
+
+/* Style the images inside the grid */
+.column img {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.column img:hover {
+  opacity: 1;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* The expanding image container (positioning is needed to position the close button and the text) */
+#container {
+	display: flex;
+	flex-wrap: wrap;
+
+}
+
+/* Expanding image text */
+#imgtext {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  color: white;
+  font-size: 20px;
+}
+
+/* Closable button inside the image */
+.closebtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  color: white;
+  font-size: 35px;
+  cursor: pointer;
+}
+</style>
+
+	<script>
+		function myFunction(imgs) {
+			// Get the expanded image
+			var expandImg = document.getElementById("expandedImg");
+			// Get the image text
+			var imgText = document.getElementById("imgtext");
+			// Use the same src in the expanded image as the image being clicked on from the grid
+			expandImg.src = imgs.src;
+			// Use the value of the alt attribute of the clickable image as text inside the expanded image
+			imgText.innerHTML = imgs.alt;
+			// Show the container element (hidden with CSS)
+			expandImg.parentElement.style.display = "block";
+		}
+	//https://www.w3schools.com/howto/howto_js_tab_img_gallery.asp
+	</script>
+
+{% endblock %}
+
+
+<!-- 	<div class="column">
+		<img src="{{ url_for('static', filename='images/xr_test.jpg') }}" alt="" style="width:50%" onclick="myFunction(this);">
+	</div>
+	<div class="column">
+		<img src="{{ url_for('static', filename='images/xr_test.jpg') }}" alt="" style="width:50%" onclick="myFunction(this);">
+	</div>
+	<div class="column">
+	  <img src="{{ url_for('static', filename='images/xr_test.jpg') }}" alt="" style="width:50%" onclick="myFunction(this);">
+	</div>
+ -->

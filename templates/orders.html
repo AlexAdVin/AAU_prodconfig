@@ -1,0 +1,145 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+  Planned orders
+{% endblock %}
+
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+
+
+  <div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+          
+    <div class="container">
+        <h3>Orders information</h3>
+
+        <div class="row">
+          
+          <div class="col">
+          <p>Billing information:</p>
+          <hr>
+          {% if userObj %}
+          <h6>Full name: Martin Jensen </h6> <!--{{ session['name'] }}-->
+          <h6>Address: Industrivej 33, Vodskov</h6>
+          <h6>Phone: +452670733</h6>
+          <h6>E-mail: mj@mdistribution.dk</h6>
+          <hr>
+          </div>
+  
+          <div class="col"></div>
+  
+          <div class="col"></div>
+  
+          <div class="col"></div>
+  
+        </div>
+          {% endif %}
+
+          
+          <h3>Order overview</h3>
+        <hr>
+        
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr id="total">  
+                <th>Order ID</th>
+                <th>Configuration</th>
+               <!--<th>Total kgCO2e <br>configuration</th>-->
+                <th>Registered</th>
+                <th>Scheduled</th>
+                <th>Emission factor</th>
+                <th>Quantity</th>
+                <th>Total kgCO2e <br> order</th>
+                <th>Submit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+  
+              </tr>
+              {% for order in orders %}
+              <tr>
+                <form action="{{ url_for('del_order', o_id=order.id) }}" method="post">
+  
+                  <td>
+                    <a href="{{ url_for('showOrder', order_id=order.id)}}">{{ order.id }}</a>
+                  </td>
+
+                  <td>
+                    
+                    {% for prod in order.products %}
+                      {% for comp in prod.components %}
+                      <a href="{{ url_for('showOrder', order_id=order.id)}}">{{ comp.name }}<br></a>
+                      {% endfor %}
+                    {% endfor %}
+                  </td>
+
+
+                  
+                  
+                  <td>
+                    {{ order.regTime }}
+                  </td>
+
+                  <td>
+                    {% if order.planTime %}
+                    
+                    {{ order.planTime }}
+
+                    {% else %}
+                    Scheduled as FIFO
+                    
+
+                    {% endif %}
+                  </td>
+
+                  <td>{{ order.EF }}</td>
+
+                  <td>{{ order.amount }}</td>
+
+                  <td>
+                    {{ "%.2f"|format(order.total_CO2e / 1000 |float) }}
+                  </td>
+  
+                  <td>
+                    <input class="btn btn-outline-danger" type="submit" name="deleteOrder" value="Del" />
+                  </td>
+                </form>
+              </tr>
+              {% endfor %}
+    
+            </tbody>
+          </table>
+        </div>
+        
+    </div>
+  
+  </div>
+
+
+</section>
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!--
+<script src="{{ url_for('static', filename='co2api.js') }}"></script>
+-->
+{% endblock %}

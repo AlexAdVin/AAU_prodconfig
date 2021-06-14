@@ -1,0 +1,67 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Resource Setup
+{% endblock %}
+
+
+
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+
+<div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+          
+  <div class="container">
+      <h2>Work plan</h2>
+      <p>The .table-hover class enables a hover state (grey background on mouse over) on table rows:</p>            
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Line topology step</th>
+            <th>Description</th>
+            <th>IP Address</th>
+            <th>Create</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <form action="" method="post">
+
+              <td><input class="form" name="step_no" placeholder="Enter step no."></td>
+              <td><input class="form" name="o_desc" placeholder="Enter description"></td>
+              <td><input class="form" name="ip_add" placeholder="192.168.137.67"></td>
+              <td><button class="btn btn-secondary">+</button></td>
+
+            </form>
+          </tr>
+
+          
+            {% for item in ops %}
+            <tr>
+                <td>{{ item.step_no }}</td>
+                <td><a href="{{ url_for('op_show', op_id=item.id)}}">{{ item.description }}</a></td>
+                <td>{{ item.ip_address }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+  </div>
+
+</div>
+  
+
+
+
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+
+
+{% endblock %}

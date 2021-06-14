@@ -1,0 +1,96 @@
+{% extends "layout2.html" %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='store.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+
+<h2>Consolidation Approach: Operational Control</h2>
+<p>This tool is built on the GHG Protocol Corporate Standard</p>
+<hr>
+
+
+<h3>Create a process</h3>
+<div class="table-responsive">
+  
+  <form method="post" id="dynamic_form" oninput="x.value=parseInt(process_value.value)*choice_EF.value">
+    <span id="result"></span>
+    <table class="table table-bordered table-striped" id="user_table">
+      <thead>
+        <tr>
+          <th width="5%">ID</th>
+          <th width="35%">Process name</th>
+          <th width="20%">Value [kWh]</th>
+          <th width="30%">Select Emission Factor</th>
+          <th width="10%">Total</th>
+        </tr>
+
+        <tbody>
+          <tr id="myTr">
+
+            <td id="row_ID"> <b> 1 </b> </td>   
+
+
+            <td>
+              <input id="process_name" autocomplete="off" autofocus placeholder="New Task" type="text">
+            </td>
+            <td>
+              <input type="number" class="form-control" id="process_value" />
+            </td>
+            <!--Table select id=choice_EF-->
+            <td>
+              <select class="form-control" id="choice_EF">
+                {% for item in nu %}
+                <option value="{{ item.el_value }}"> {{ item.country }} </option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <output id="x" for="a b"></output> kgCO2e
+            </td>
+            <td>
+              <button type="submit" class="btn btn-danger">Create</button>
+            </td>
+          </tr>
+        </tbody>
+
+        <!--Table footer-->
+        <tfoot> 
+          <tr>
+
+          </tr>
+        </tfoot>
+            
+      </thead>
+    </table>
+
+    <hr>
+    <a href="{{ url_for('main') }}">
+        <button class="btn btn-success" id="save_btn">
+            Save
+        </button>
+    </a>
+  
+  </form>
+
+<hr>
+
+<div class="form-group">
+  <form action="" method="post">    
+    <input type="text" id="fname" name="pdf"><br><br>
+    <button class="btn btn-primary" name="pdf">PDF</button> 
+  </form>
+
+
+
+
+
+
+   
+</div>
+
+
+
+</div>
+{% endblock %}

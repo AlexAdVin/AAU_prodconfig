@@ -1,0 +1,400 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+  Order details
+{% endblock %}
+
+
+{% block head %}
+
+{% endblock %}
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+
+  <div class="container shadow p-4 mb-4 bg-white" style="margin-top:30px">
+
+      <div class="row">
+        <div class="col-sm-12">
+        <h3>Order details</h3>
+        <p>Billing information:</p>
+        <hr>
+
+        <h6>Full name: {{ session['name'] }}  </h6> <!--{{ session['name'] }}-->
+        <h6>Address: Industrivej 33, Vodskov</h6>
+        <h6>Phone: +452670733</h6>
+        <h6>E-mail: mj@mdistribution.dk</h6>
+        <hr>
+        </div>
+
+
+
+
+      </div>
+
+        
+        
+        <div class="row">
+        <!-- Order info -->
+          <div class="col-sm-12">
+            <div class="card">
+              <h5 class="card-header">Order info</h5>
+              <div class="card-body">
+
+                <p  class="card-text">Details about the order:</p> <hr>
+                <div class="row">
+                {% if order %}
+
+                  <div class="col-sm-6">
+                    <h6><b>Order id:  </b> <span>{{ order.id }}</span> </h6>
+                    <h6><b>Registered:</b> <span>{{ order.regTime }}</span> </h6>
+                    <h6><b>Planned:</b> 
+                      <span>
+                        {% if order.planTime %}
+                    
+                        {{ order.planTime }}
+    
+                        {% else %}
+                        Scheduled as FIFO
+
+                        {% endif %}
+                    </span> </h6>
+                    <hr>
+                    <h6><b>Configured model:</b> <span>{{ prod.name }} | ID: {{ prod.id }}</span> </h6>
+                    <h6><b>Pieces ordered:</b> <span>{{ order.amount }}</span> </h6>
+                    <h6><b>Total  [ kgCO2e ] estimated for configured model:</b> <span>{{ "%.4f"|format(order.total_CO2e / 1000 |float) }} </span> </h6>
+                    <h6><b>Total  [ kgCO2e ] estimated for order ({{ order.amount }}pcs.):</b> <span>{{ "%.2f"|format(order.total_CO2e * prod_info.o_pcs / 1000 |float) }} </span> </h6>
+                  </div>
+
+                  <div class="col-sm-4">
+                    <h5>Total carbon footprint</h5>
+                    <h1 style="display: inline;" id="total_CO2e"> {{ "%.2f"|format(order.total_CO2e * prod_info.o_pcs / 1000 |float) }} </h1><br><h3 style="display: inline;"> kgCO2e</h3>
+                    <img style="width: 20%;" src="{{ url_for('static', filename='images/cloud_co2.jpg') }}" alt="">
+                    <form action="" method="post">
+                      <input id="fname" name="pdf" value="yes" type="hidden"><br><br>
+                      <button class="btn btn-primary" name="pdf">Generate report</button> 
+                    </form>
+                  </div>
+
+
+
+                </div>
+                <!--
+                <h5>Total carbon footprint</h5>
+                <h1 style="display: inline;" id="total_CO2e">2.69</h1><h3 style="display: inline;"> gCO2e</h3>
+                <img style="width: 20%;" src="{{ url_for('static', filename='images/cloud_co2.jpg') }}" alt="">
+                -->
+                   
+
+
+                </div>
+
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+
+
+        <br>
+
+        <!-- Product details -->
+        <div class="row">
+
+          <div class="col-sm-12">
+            <div class="card">
+              <h5 class="card-header">Product details</h5>
+              <div class="card-body">
+                <p class="card-text">Details about the product:</p>
+
+                <div class="row">
+
+
+                  <div class="col-sm-3">
+                    {% for item in order.products %}
+                    <p><b>Product ID</b>  : <span>{{ item.id }}</span> </p> <br> <br>
+                    {% endfor %}
+
+                    
+                    
+
+
+                  </div>
+                  
+
+
+                </div>
+
+
+
+                {% if order %}
+
+                    <!-- Product data -->
+                    <div class="row">
+
+                      <div class="container">
+                        
+                        <div class="table-responsive">
+                          <table class="table table-hover">
+                            <thead id="total">
+                              <tr>
+                                <th>Configuration (components)</th>
+                                <th>Part no.</th>
+                                <th>Specification</th>
+                                <th>Property</th>
+                                <th>Carbon footprint [gCO2e]</th>
+                              </tr>
+                            </thead>
+                            {% for prod in order.products %}
+                            {% for comp in prod.components %}
+                            <tbody>
+                              <tr>
+                                <td>{{ comp.name }}</td>
+                                <td>{{ comp.part_no }}</td>
+                                <td>{{ comp.specs }}</td>
+                                {% for prop in comp.properties %}
+                                <td>{{ prop.material_name }}</td>
+                                <td>{{ "%.2f"|format(prop.emissionData_value  |float) }}</td>
+                                
+                              </tr>
+                            {% endfor %}
+                            {% endfor %}
+                            {% endfor %}
+
+                              <tr>
+                                <td id="total"><b>Total for configuration</b></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"> <b>{{ "%.2f"|format(prod.total_LCI  |float) }}</b> </td>
+                              </tr>
+
+
+                            </tbody>
+
+                          </table>
+                        </div>
+                        
+                      </div>
+
+                    </div>
+
+              {% endif %}
+              </div>
+
+
+                
+              </div>
+          </div>
+        </div>
+
+        <br>
+        <br>
+
+        <!-- Routing details -->
+        <div class="row">
+  
+          <div class="col-sm-12">
+            <div class="card">
+              <h5 class="card-header">Routing details</h5>
+              <div class="card-body">
+                <p class="card-text">Details about the manufacturing routing, consumption data and the electric energy emission factor.</p>
+  
+
+
+                <div class="row">
+  
+                  <div class="col-sm">
+                    
+                    <div class="row">
+  
+                      <div class="container">
+                        
+                        <div class="table-responsive">
+                          <table class="table table-hover">
+                            <thead id="total">
+                              <tr>
+                                <th>Process/Activity</th>
+                                <th>Work time [s]</th>
+                                <th>Electric energy [Wh]</th>
+                                <th>Electric energy <br> (pneumatic) [Wh]</th>
+                                <th>Activity [Wh]</th>
+                              </tr>
+                            </thead>
+  
+                            <tbody>
+
+                              
+                                {% for Wh in prod_info.activities %} 
+                                  {% set item_1 = prod_info.activities[loop.index-1] %}
+                                  {% set item_2 = prod_info.act_dt[loop.index-1] %}
+                                  {% set item_3 = prod_info.act_el[loop.index-1] %}
+                                  {% set item_4 = prod_info.act_air[loop.index-1] %}
+                                  {% set item_5 = prod_info.act_Wh[loop.index-1] %}
+                              <tr>
+                                <td>{% for item in item_1 %}{{ item }}<br> {% endfor %}<br> </td>
+                                <td>{% for el in item_2 %}{{ el }}<br> {% endfor %}<br> </td>
+                                <td>{% for el in item_3 %}{{ "%.2f"|format(el|float) }}<br> {% endfor %}<br> </td>
+                                <td>{% for el in item_4 %}{{ "%.2f"|format(el|float) }}<br> {% endfor %}<br> </td>
+                                <td>{% for el in item_5 %}{{ "%.2f"|format(el|float) }}<br> {% endfor %}<br> </td>                                
+                              </tr>
+                              {% endfor %}
+                              
+                              
+                              <tr>
+                                {% for total in prod_info.total_Wh %}
+                                <td id="total"><b>Total [Wh] for product model</b></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"> <b>{{ "%.2f"|format(total|float)  }}</b> </td>
+                                {% endfor %}
+                              </tr>
+
+                              <tr>
+                                <td id="total"><b>Emission factor [ gCO2e / kWh ]</b></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"> <b>{{ "%.2f"|format(prod_info.o_EF |float) }}</b> </td>
+                              </tr>
+
+                              <tr>
+                                {% for total in prod_info.total_Wh %}
+                                <td id="total"><b>Total gCO2e</b></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"></td>
+                                <td id="total"> <b>{{ "%.2f"|format(total * order.EF / 1000 |float)  }}</b> </td>
+                                {% endfor %}
+                              </tr>
+
+                            </tbody>
+                            
+  
+                          </table>
+                        </div>
+                        
+                      </div>
+  
+                    </div>
+  
+                  </div>
+                  
+                </div>
+  
+              
+              </div>
+  
+              </div>
+            </div>
+          
+        </div>
+          
+
+
+        </div>
+
+    </div>
+  
+  </div>
+  <input type="text" id="check" value="{{ test }}" class="no-print">
+
+</section>
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!--
+<script src="{{ url_for('static', filename='co2api.js') }}"></script>
+-->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var checkit = document.querySelector("#check").value
+    var prod_info = JSON.parse(checkit)
+    console.log(prod_info)
+    //document.getElementById("check").innerHTML = "Sugi pula"
+    
+
+    console.log("From server:", prod_info)//, "\nproperty: ", data.prop );
+              
+    var compList = prod_info.components;
+    var actList = prod_info.activities;
+
+    var tBody = document.querySelector("#t_body");
+
+    document.getElementById('total_gCO2e').innerHTML = prod_info.total_gCo2e_Wh;
+
+    for (let index = 0; index < compList.length; index++) {
+                
+      var c_name = compList[index];
+      var c_Wh = prod_info.comp_Wh[index];
+
+      console.log("element from server:", c_name,c_Wh, "itteration:", index)
+
+      for (let i = 0; i < actList[index].length; i++) {
+
+        //console.log("check lenght:", compList[index].property[0].length)
+
+        var a_name = actList[index][i];
+        var act_dt = prod_info.act_dt[index][i];
+        var act_el = prod_info.act_el[index][i];
+        var act_air = prod_info.act_air[index][i];
+        var act_Wh = prod_info.act_Wh[index][i];
+        
+
+        //console.log("activityList:",a_name, "\nEmission value:", act_Wh, "\nTotal:", tot_Wh )
+
+        //var Trow = document.createElement("tr");
+        /*
+        var Trow = document.getElementById("testTR")
+
+        var td_aName = document.getElementById("testTD1");
+        var td_dt = document.getElementById("testTD2");
+        var td_el = document.getElementById("testTD3");
+        var td_air = document.getElementById("testTD4");
+        var td_Wh = document.getElementById("testTD5");
+        
+        
+        //var td_aName = document.createElement("td");
+        //var td_dt = document.createElement("td");
+        //var td_el = document.createElement("td");
+        //var td_air = document.createElement("td");
+        //var td_Wh = document.createElement("td");
+        
+        td_aName.innerHTML = a_name;
+        td_dt.innerHTML= act_dt;
+        td_el.innerHTML= act_el;
+        td_air.innerHTML= act_air;
+        td_Wh.innerHTML= act_Wh;
+
+
+        Trow.append(td_aName);
+        Trow.append(td_dt);
+        Trow.append(td_el);
+        Trow.append(td_air);
+        Trow.append(td_Wh);
+
+
+        tBody.append(Trow)
+        */
+
+      }
+
+    }
+  });
+</script>
+
+
+{% endblock %}

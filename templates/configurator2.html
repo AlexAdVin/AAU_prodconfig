@@ -1,0 +1,406 @@
+{% extends "layout2.html" %}
+
+{% block title %}
+    Configure your product
+{% endblock %}
+
+
+
+
+
+{% block body %}
+
+<!--Section: Statistics with subtitles-->
+<section>
+<div class="row">
+
+	<div class="col-xl-6 col-md-12 mb-4">
+        <div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+			<div class="card" name="products">
+
+				<div class="card-header">
+					<h5 class="mb-0 text-center"><strong>Configure the product</strong></h5>
+				</div>
+
+
+				<div class="card-body">
+					<p class="card-text">Select which components the product should be manufactured with.</p><hr>
+
+                    <p class="card-text">Note 1: The "Bottom housing" component is the interface of the product and therefore cannnot be excluded.</p>
+                    <p class="card-text">Note 2: Fuses can only be selected if the PCB component is chosen.</p>
+                    <div class="row">
+                        <div class="col">
+                            <div class="colours">
+                                <label class="container">Bottom housing
+                                    <input type="checkbox" id="1" name="component" value="Bottom housing" data-name="BH" checked="checked" class="colour BH selected" disabled>
+                                    <span class="checkmark"></span><br>
+                                </label>
+
+                                <label class="container">Printed circuit board (PCB)
+                                    <input type="checkbox" id="2" name="component" value="Printed circuit board (PCB)" data-name="PCB" class="colour PCB selected">
+                                    <span class="checkmark"></span><br>
+                                </label>
+
+                                <label class="container">Fuse 1
+                                    <input type="checkbox" id="3" name="component" value="Fuse 1" data-name="F1" disabled class="colour F1 selected">
+                                    <span class="checkmark"></span><br>
+                                </label>
+
+                                <label class="container">Fuse 2
+                                    <input type="checkbox" id="4" name="component" value="Fuse 2" data-name="F2" disabled class="colour F2 selected">
+                                    <span class="checkmark"></span><br>
+                                </label>
+
+                                <label class="container">Top Housing
+                                    <input type="checkbox" id="5" name="component" value="Top housing" data-name="TH" class="colour TH selected">
+                                    <span class="checkmark"></span><br>
+                                </label>
+                                
+                                <div id="test2" value="{{prod_id}}" hidden>
+                                    {{prod_id}}
+                                </div><hr>
+                            </div>
+                        </div>
+                        <div class="col">
+                        <div class="imagery">
+                            <img src="../static/images/_TF-BH.png" alt="AAU XR" class="image" style="width:100%" />
+                        </div>
+                        </div>
+                    </div>
+
+
+
+
+
+				</div>
+
+			</div>
+
+        </div>
+    </div>
+
+	<div class="col-xl-6 col-md-12 mb-4">
+		<div class="container-fluid shadow p-4 mb-4 bg-white" style="margin-top:30px">
+			<div class="card">
+
+				<div class="card-header">
+					<h5 class="mb-0 text-center"><strong>Properties for the selected components</strong></h5>
+				</div>
+
+				<div class="card-body">
+                    <p class="card-text">Select a property for each component</p>
+                    
+                        <ul id="show">
+                            <p>Please select a property/feature from the list below.</p>
+                        </ul>
+                    
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-block" id="configure" >Create configuration</button>
+                </div>
+            </div>
+			</div>
+		</div>
+
+	</div>
+
+</div>
+</section>
+{% endblock %}
+
+
+
+{% block script %}
+
+<style>
+    /* The container */
+.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container input:checked ~ .checkmark {
+  background-color: #2bcc16;
+}
+
+.container input[checked][disabled] ~ .checkmark {
+  background-color: #2bcc169f;
+}
+
+.container input:disabled ~ .checkmark {
+  background-color: #faf9f9a8;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 8px;
+  height: 15px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Energidataservice API -->
+<script src="{{ url_for('static', filename='viz.js') }}"></script>
+
+<script>
+    var checked = [];
+
+	$('input[type=checkbox]').on('change', function() {			//https://stackoverflow.com/questions/48220938/howto-update-multiple-checkbox-values-at-once-on-a-array-variable-using-jquery
+        // Fuses are only available if PCB is on
+        if(! document.getElementById('2').checked) {
+            document.getElementById("3").disabled = true;
+            document.getElementById("4").disabled = true;
+            document.getElementById('3').checked = false;
+            document.getElementById('4').checked = false;
+        }else{
+            document.getElementById("3").disabled = false;
+            document.getElementById("4").disabled = false;
+        }
+
+        // Empty the array for each checked, before appending newly checked elements
+        if(checked){
+            checked.length = 0;
+        };
+        
+        $("input[type='checkbox']:checked").each(myEach);
+        function myEach() {
+
+            checked.push({
+            id: this.id,
+            name: this.value
+            });
+
+        };
+        //console.log("checked1",checked);
+    
+        var jsonObj = JSON.stringify(checked);
+
+        // Store selection into the localStorage
+        //localStorage.setItem("testJSON", jsonObj);
+        //myLocal = localStorage.getItem("testJSON");
+		//console.log("JSON parse objects:",JSON.parse(myLocal));
+
+        var prod_id = parseInt(document.getElementById("test2").innerHTML);
+        
+        $.get($SCRIPT_ROOT + '/model/'+`${prod_id}`, 		// $.post(URL,data,callback);
+        {
+            a: jsonObj,
+            b: prod_id
+        }, 
+
+        function(data, status) {
+			
+            console.log("From server:", data.result, "\nStatus: " + status)//, "\nproperty: ", data.prop );
+            
+            var compList = data.result;
+            //console.log("compList: ",compList, "lenght:", compList.length);
+            
+            var s1 = document.getElementById("show");
+				s1.innerHTML = "";
+
+            for (let index = 0; index < compList.length; index++) {
+                
+                var c_name = compList[index].component[0];
+
+                //console.log("element from server:", c_name, "itteration:", index)
+
+                var acc_btn = document.createElement("input");
+                
+                // Helper function to set multiple attributes to an element
+                function setAttributes(el, attrs) {
+                    for(var key in attrs) {
+                        el.setAttribute(key, attrs[key]);
+                    }
+                }
+                
+                setAttributes(acc_btn, {
+                    "class":"accordion",
+                    "id": "component" + c_name,
+                    "value": c_name
+                    
+                });
+                
+                var div_el = document.createElement("div");
+                div_el.setAttribute("class", "panel");
+
+                s1.appendChild(acc_btn);
+                s1.appendChild(div_el);
+
+                for (let i = 0; i < compList[index].property[0].length; i++) {
+
+                    //console.log("check lenght:", compList[index].property[0].length)
+
+                    var p_name = compList[index].property[0][i];
+                    var e_id = compList[index].id[0][i];
+                    var e_value = compList[index].emissionValue[0][i];
+                    var e_unit = compList[index].emissionValue[0][i];
+
+
+                    //console.log("property name:",p_name, "\nEmission value:", e_value)
+                    
+                    var checkBox = createCheckbox();
+                    var labelBox = createlabel();
+                    var br = document.createElement("br");
+                    //console.log(checkBox)
+                    div_el.appendChild(checkBox);
+                    div_el.appendChild(labelBox);
+                    div_el.appendChild(br);
+
+                    // Helper function to create an input element
+                    function createCheckbox() {
+                        var checkbox = document.createElement("input");
+                        checkbox.setAttribute("type", "checkbox");
+                        checkbox.setAttribute("name", "property");
+                        checkbox.setAttribute("id", e_id);
+                        checkbox.setAttribute("value", p_name);
+                        return checkbox;
+                    }
+                    //console.log(checkBox)
+                    // Helper function to create an input element
+                    function createlabel() {
+                        var newLabel1 = document.createElement("label");
+				        newLabel1.setAttribute("for", "checkbox" + i)
+                        newLabel1.innerHTML = 'The property : ' + p_name + " [gCO2e]: " + e_value;
+                        return newLabel1;
+                    }
+                    
+                
+                };
+
+                // Mechanics for accordion
+                acc_btn.addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                    } else {
+                    panel.style.display = "block";
+                }
+                });
+               
+            }
+                
+        });
+        
+	});
+
+        
+        //document.getElementById("configure").disabled = false;
+
+        var checked2 = [];
+        $('#configure').on('click', function() {  
+
+                // Fuses are only available if PCB is on
+            if(! document.getElementById('2').checked) {
+                document.getElementById("3").disabled = true;
+                document.getElementById("4").disabled = true;
+                document.getElementById('3').checked = false;
+                document.getElementById('4').checked = false;
+            }else{
+                document.getElementById("3").disabled = false;
+                document.getElementById("4").disabled = false;
+            }
+
+
+
+            // Empty the array for each checked, before appending newly checked elements
+            if(checked2){
+                checked2.length = 0;
+            };
+
+            $("input[name='property']:checked").each(myEach2);
+
+            function myEach2() {
+                
+                checked2.push({
+                id: this.id,
+                name: this.value
+                });
+
+            };
+
+            //console.log("Checked2: ",checked2);
+            var jsonObj2 = JSON.stringify(checked2);
+
+            // Store selection into the localStorage
+            //localStorage.setItem("testJSON", jsonObj2);
+            //myLocal = localStorage.getItem("testJSON");
+            console.log("JSON parse objects:",jsonObj2);
+
+            var prod_id = parseInt(document.getElementById("test2").innerHTML);
+                
+                        
+            $.ajax({
+                url: $SCRIPT_ROOT + '/model/'+`${prod_id}`,
+                data: {c: prod_id, d: jsonObj2},
+                type: 'POST' 
+            }).done(function() {
+                window.location.href = "/inquiry";
+            });
+        });
+
+    
+
+
+    
+
+
+    
+</script>
+
+
+
+{% endblock %}
