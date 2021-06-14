@@ -26,7 +26,6 @@ from passlib.hash import sha256_crypt
 #Configuration to generate pdfs:
 #1options = {'enable-local-file-access': None,'javascript-delay': 3000}
 #2path_wkhtmltopdf = r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe'
-
 #3config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
 
 app = Flask(__name__)
